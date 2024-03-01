@@ -7,11 +7,16 @@ const fetchCategory = () => {
     .then(({ data }) =>
       data.forEach((element) => {
         const newBtn = document.createElement("button");
-        newBtn.className = "btn";
+        newBtn.className = "btn category-btn text-white bg-gray-400";
         newBtn.innerText = element.category;
-        newBtn.addEventListener("click", () =>
-          fetchDataByCategory(element.category_id)
-        );
+        newBtn.addEventListener("click", () => {
+          fetchDataByCategory(element.category_id);
+          const allBtns = document.querySelectorAll(".category-btn");
+          for (const btn of allBtns) {
+            btn.classList.remove("bg-red-600");
+          }
+          newBtn.classList.add("bg-red-600");
+        });
         btnContainer.appendChild(newBtn);
       })
     );
