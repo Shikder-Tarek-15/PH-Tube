@@ -1,5 +1,13 @@
 const btnContainer = document.getElementById("btn-container");
 const errorMsg = document.getElementById("error-msg");
+const sortBtn = document.getElementById("sort-btn");
+let selectedCategory = 1000;
+let sortByBtn = false;
+
+sortBtn.addEventListener("click", () => {
+  sortByBtn = true;
+  fetchDataByCategory(selectedCategory, sortByBtn);
+});
 
 const fetchCategory = () => {
   fetch(" https://openapi.programming-hero.com/api/videos/categories")
@@ -22,7 +30,8 @@ const fetchCategory = () => {
     );
 };
 
-const fetchDataByCategory = (categoryId = "1000") => {
+const fetchDataByCategory = (categoryId, sortByBtn) => {
+  selectedCategory = categoryId;
   const cardContainer = document.getElementById("card-container");
   cardContainer.innerHTML = "";
 
@@ -31,6 +40,22 @@ const fetchDataByCategory = (categoryId = "1000") => {
   )
     .then((res) => res.json())
     .then(({ data }) => {
+      // sort Data by view
+      if (sortByBtn) {
+        data.sort((a, b) => {
+          const totalViewFirst = a.others?.views;
+          const totalViewSecond = b.others?.views;
+
+          // convert k
+          const totalViewFirstNumber =
+            parseFloat(totalViewFirst.replace("K", "")) || 0;
+          const totalViewSecondNumber =
+            parseFloat(totalViewSecond.replace("K", "")) || 0;
+
+          return totalViewSecondNumber - totalViewFirstNumber;
+        });
+      }
+
       if (data.length === 0) {
         errorMsg.classList.remove("hidden");
       } else {
@@ -76,4 +101,4 @@ const fetchDataByCategory = (categoryId = "1000") => {
 };
 
 fetchCategory();
-fetchDataByCategory();
+fetchDataByCategory(selectedCategory, sortByBtn);
